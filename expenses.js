@@ -1,6 +1,4 @@
-#!/usr/bin/env node
-
-// expenses.js
+import * as fs from 'fs';
 
 const args = process.argv.slice(2);
 
@@ -34,20 +32,20 @@ function parseArgs(argsArray) {
 const { command, options } = parseArgs(args);
 
 function addExpense({ amount, category, note }) {
-  if (!amount || !category) {
-    console.error('Missing required fields: --amount and --category');
-    process.exit(1);
-  }
-
   const expense = {
-    amount: parseFloat(amount),
-    category,
-    note: note || ''
+    id: crypto.randomUUID().slice(0, 8),
+    amount: parseFloat(amount ?? 0),
+    category: category ?? "uncategorized",
+    note: note ?? "UNKNOWN",
+    date: new Date().toISOString()
   };
 
   console.log('Adding expense:', expense);
 
-  // TODO: save to file/db
+  fs.appendFile('expenses.json', JSON.stringify(expense) + '\n', function (err) {
+  if (err) throw err;
+  console.log('Saved!');
+});
 }
 
 function generateReport({ category }) {
