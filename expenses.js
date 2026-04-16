@@ -50,10 +50,10 @@ function addExpense({ amount, category, note }) {
   if (Object.keys(expenses).length === 0) {
     expenses = [];
   }
-  
+
   expenses.push(expense);
-  fs.writeFileSync("expenses.json", JSON.stringify(expenses), function (err) {
-    if (err) throw err;
+  fs.writeFile("expenses.json", JSON.stringify(expenses), function (err) {
+    if (err) console.log('Error adding expense:', expense);
     console.log('Saved!');
   });
 }
@@ -61,11 +61,19 @@ function addExpense({ amount, category, note }) {
 function generateReport({ category }) {
   console.log('Generating report...');
 
-  if (category) {
-    console.log(`Filtering by category: ${category}`);
-  }
+  fs.readFile("expenses.json", "utf-8", function (err, data) {
+    if (err) console.log('Error generating report:', err);
 
-  // TODO: load + aggregate data
+    const expenses = JSON.parse(data);
+
+    if (category) {
+      console.log(`Filtering by category: ${category}`);
+      const filtered = expenses.filter(e => e.category === category);
+      console.table(filtered);
+    } else {
+      console.table(expenses);
+    }
+  });
 }
 
 switch (command) {
