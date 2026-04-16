@@ -44,10 +44,15 @@ function addExpense({ amount, category, note }) {
 
   // append expense to file
   console.log('Adding expense:', expense);
-  let expensesjson = fs.readFileSync("users.json","utf-8");
+  let expensesjson = fs.readFileSync("expenses.json","utf-8");
   let expenses = JSON.parse(expensesjson);
+  
+  if (Object.keys(expenses).length === 0) {
+    expenses = [];
+  }
+  
   expenses.push(expense);
-  fs.writeFileSync("users.json", JSON.stringify(expenses), function (err) {
+  fs.writeFileSync("expenses.json", JSON.stringify(expenses), function (err) {
     if (err) throw err;
     console.log('Saved!');
   });
