@@ -32,6 +32,8 @@ function parseArgs(argsArray) {
 const { command, options } = parseArgs(args);
 
 function addExpense({ amount, category, note }) {
+
+  // create expense
   const expense = {
     id: crypto.randomUUID().slice(0, 8),
     amount: parseFloat(amount ?? 0),
@@ -40,12 +42,15 @@ function addExpense({ amount, category, note }) {
     date: new Date().toISOString()
   };
 
+  // append expense to file
   console.log('Adding expense:', expense);
-
-  fs.appendFile('expenses.json', JSON.stringify(expense) + '\n', function (err) {
-  if (err) throw err;
-  console.log('Saved!');
-});
+  let expensesjson = fs.readFileSync("users.json","utf-8");
+  let expenses = JSON.parse(expensesjson);
+  expenses.push(expense);
+  fs.writeFileSync("users.json", JSON.stringify(expenses), function (err) {
+    if (err) throw err;
+    console.log('Saved!');
+  });
 }
 
 function generateReport({ category }) {
